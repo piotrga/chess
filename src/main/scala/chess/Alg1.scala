@@ -1,7 +1,7 @@
 package chess
 
 object Alg1{
-  class DuplicateCheckingSolutions extends Solutions{
+  class DuplicateCheckingSolutions extends SolutionsListener{
     private var solutions = Set[Board]()
 
     override def count = solutions.size
@@ -13,13 +13,13 @@ object Alg1{
     }
   }
 
-  def findSolutions(board: Board, pieces: Iterable[Piece]) : Solutions = {
+  def findSolutions(board: Board, pieces: Iterable[Piece]) : SolutionsListener = {
     val solutions = new DuplicateCheckingSolutions
     findSolutions(board, pieces, solutions)
     solutions
   }
 
-  def findSolutions(board: Board, pieces: Iterable[Piece], solutions:Solutions){
+  def findSolutions(board: Board, pieces: Iterable[Piece], solutions:SolutionsListener){
     pieces match{
       case piece :: remainingPieces =>
         for { pos <- board.fields.par} {
