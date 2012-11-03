@@ -3,7 +3,7 @@ package chess
 import utils._
 
 object Main extends App{
-  lazy val findSolutions = ConstantMemory_O_MxNtoK.findSolutions _
+  lazy val findSolutions = DFS_MxN_memory_O_MxNtoK.findSolutions _
 
   override def main(args: Array[String]) {
     solve(Board(3, 3), Map(King -> 2, Rook -> 1))

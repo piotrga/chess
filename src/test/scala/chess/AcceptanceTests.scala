@@ -4,7 +4,7 @@ import org.scalatest.FreeSpec
 import org.scalatest.matchers.MustMatchers
 
 class AcceptanceTests extends FreeSpec with MustMatchers{
-  val findSolutions = ConstantMemory_O_MxNtoK.findSolutions _
+  val findSolutions = DFS_MxN_memory_O_MxNtoK.findSolutions _
 
   val s1 =
     """.R.
