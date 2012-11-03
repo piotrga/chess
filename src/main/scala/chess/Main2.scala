@@ -1,6 +1,6 @@
 package chess
 
-import Chess._
+import Piece._
 
 object Main2 extends App{
 
@@ -18,7 +18,7 @@ object Main2 extends App{
 
     //  a 6x9 board with 2 Kings, 1 Queen, 1 Bishop, 1 Rook and 1 Knight.
     val (duration4, solutions4) = time (ConstantMemory_O_MxNtoK.findSolutions(Board(6, 9 ), Map(King -> 2, Queen -> 1, Bishop -> 1, Rook -> 1, Knight -> 1 ) ))
-    println("[Alg2] Found %d solutions in %dms" format(solutions3.count, duration3))
+    println("[Alg2] Found %d solutions in %dms" format(solutions4.count, duration4))
 
   }
 }

@@ -13,17 +13,17 @@ object Alg1{
     }
   }
 
-  def findSolutions(board: Board, pieces: Iterable[Chess]) : Solutions = {
+  def findSolutions(board: Board, pieces: Iterable[Piece]) : Solutions = {
     val solutions = new DuplicateCheckingSolutions
     findSolutions(board, pieces, solutions)
     solutions
   }
 
-  def findSolutions(board: Board, pieces: Iterable[Chess], solutions:Solutions){
+  def findSolutions(board: Board, pieces: Iterable[Piece], solutions:Solutions){
     pieces match{
       case piece :: remainingPieces =>
         for { pos <- board.fields.par} {
-          (board withPiece (piece, pos))
+          (board tryPiece (piece, pos))
             .map (newBoard => findSolutions(newBoard, remainingPieces, solutions))
         }
       case Nil => solutions.found(board)

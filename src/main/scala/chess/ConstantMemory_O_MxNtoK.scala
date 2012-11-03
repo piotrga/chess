@@ -2,25 +2,25 @@ package chess
 
 object ConstantMemory_O_MxNtoK{
 
-  def findSolutions(board: Board, pieces: Map[Chess,Int]) : Solutions = {
+  def findSolutions(board: Board, pieces: Map[Piece,Int]) : Solutions = {
     require( pieces.values forall( _ > 0), "Number of pieces must be > 0" )
-
+    val stopParallelism = pieces.size - 2
     val solutions = new Solutions
 
-    def findSolutions(board: Board, pieces: MSet[Chess], fields: List[(Int,Int)]){
+    def findSolutions(board: Board, pieces: MSet[Piece], fields: List[(Int,Int)]){
       if (pieces.isEmpty)
         solutions.found(board)
       else{
         fields match{
           case pos :: remainingFields =>
-            for { piece <- pieces.keys.par} {
-              (board withPiece (piece, pos))
-                .map (newBoard => findSolutions(newBoard, pieces - piece, remainingFields))
+            val piecesToIterate = if (pieces.size < stopParallelism ) pieces.keys else pieces.keys.par
+            for { piece <- piecesToIterate} {
+              (board tryPiece (piece, pos))
+                .map (newValidBoard => findSolutions(newValidBoard, pieces - piece, remainingFields))
             }
             findSolutions(board, pieces, remainingFields)
           case Nil => ()
         }
-
       }
     }
 
@@ -29,6 +29,8 @@ object ConstantMemory_O_MxNtoK{
   }
 
   case class MSet[K](private val map: Map[K,Int]) {
+    def size = map.size
+
     def isEmpty = map.isEmpty
     def keys = map.keys
     def -(key : K) : MSet[K] = map.get(key) match {
