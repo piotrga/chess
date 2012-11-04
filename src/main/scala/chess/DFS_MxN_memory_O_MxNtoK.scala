@@ -2,10 +2,10 @@ package chess
 
 import collection.immutable.Stream.Empty
 
-// This algorithm solves the problem in O( MxN ! / (MxN - K) !) ~= O(MxN ^ K) where K is a number of pieces.
+// This algorithm solves the problem in pessimistic time O( MxN ! / (MxN - K) !) ~= O( MxN ^ K) where K is a number of pieces.
 // It is in the pessimistic case where all the pieces are unique.
 
-// It does it in MxN stack frames so the memory consumption is MxN
+// It does it in MxN stack frames, so the memory consumption is MxN
 object DFS_MxN_memory_O_MxNtoK{
 
   def findSolutions(board: Board, pieces: Map[Piece,Int], listener: SolutionsListener) = {
@@ -14,7 +14,7 @@ object DFS_MxN_memory_O_MxNtoK{
 
 
     // This method is not tail recursive, which means that solution will run out of stack if MxN is big
-    // I could flatten it, and implement it without recursion, on my own stack or queue, but I decided not to do it
+    // I could have flattened it, and implemented it without recursion, on my own stack or queue, but I decided not to do it
     // as the excercise guidelines clearly suggested that simple readable solution is preferred.
     def findSolutions(board: Board, remainingPieces: MSet[Piece], fields: Stream[Position]){
       if (remainingPieces.isEmpty)
@@ -36,6 +36,7 @@ object DFS_MxN_memory_O_MxNtoK{
       remainingPieces.uniqueElements else remainingPieces.uniqueElements.par
 
     findSolutions(board, MSet(pieces), board.fields)
+    listener.done()
   }
 
   object MSet{

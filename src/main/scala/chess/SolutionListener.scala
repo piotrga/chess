@@ -1,6 +1,10 @@
 package chess
 
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent._
+import collection.immutable.Queue
+import chess.Board
+import java.io.{PrintStream, BufferedOutputStream, BufferedWriter}
 
 class SolutionsListener{
   private val solutionsFound = new AtomicInteger(0)
@@ -9,12 +13,22 @@ class SolutionsListener{
   def found(board: Board)  {
     solutionsFound.incrementAndGet()
   }
+
+  def done() {}
 }
 
 class SysOutSolutionsListener extends SolutionsListener{
+
+  val out = new BufferedOutputStream(System.out, 5000000)
   override def found(board: Board)  {
     super.found(board)
-    println("Board[%dx%d]:\n\t|%s|\n" format (board.M, board.N, board.mkString("|\n\t|")))
+    if(count % 10000 == 0) System.err.println(count/1000+"k")
+    val msg = "Board[%dx%d]:\n\t|%s|\n" format(board.M, board.N, board.mkString("|\n\t|"))
+    out.write(msg.getBytes)
+  }
+
+  override def done() {
+      out.flush()
   }
 }
 

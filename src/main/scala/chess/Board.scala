@@ -18,21 +18,23 @@ trait Piece{
 
 case class Board(M:Int, N:Int, pieces : Map[Position, Piece] = Map.empty){
   def fields : Stream[Position] = (for {x <- 0 until M; y <- 0 until N} yield Position(x,y)).toStream
+
   def tryPiece(newPiece:Piece, newPos:Position) : Option[Board] =
     if( canPutPieceAtPosition(newPiece, newPos) )
       Some(Board(M, N, pieces + (newPos -> newPiece)))
     else
       None
 
-
   private def canPutPieceAtPosition(newPiece:Piece, newPos:Position): Boolean = {
     pieces.forall {case (pos, piece) => !piece.attacksField(pos, newPos) && !newPiece.attacksField(newPos, pos)}
   }
 
   def mkString(rowSeparator:String = "\n") = {
-    val stringRepresentation = for {y <- 0 until N; x <- 0 until M} yield pieces.get(Position(x, y)) map (_.mkString) getOrElse (".")
-    stringRepresentation grouped M map (_.mkString) mkString rowSeparator
+    val b = Array.fill(M,N)(".") // I know it is mutable, but it makes it 2x faster, and still readable
+    for ((pos, piece) <- pieces) b(pos.x)(pos.y) = piece.mkString
+    b. map(_.mkString ) mkString rowSeparator
   }
+
 }
 
 
