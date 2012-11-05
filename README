@@ -1,0 +1,33 @@
+Running
+=======
+sbt run > out.txt
+
+Main class & input
+==================
+The main class is chess.Main
+
+In order to change the input please modify the main class, i.e.
+
+solve(Board(6, 9 ), pieces = Map(King -> 2, Queen -> 1, Bishop -> 1, Rook -> 1, Knight -> 1 ))
+
+Solution
+========
+
+Algorithm
+---------
+It is Depth First Search with checking validity of the board on the go.
+Because of the validity checking the invalid boards are not progressed down the solution tree, which makes the algorithm much faster for inputs, which have few correct solutions.
+
+Unqueness
+---------
+Because the iteration is on the board fields first, and then on kinds of pieces, produced solutions are guaranteed to be unique.
+
+Complexity
+----------
+Computational complexity in pessimistic case is ~= O(MxN ^K), when all the pieces are unique, or in optimistic case O(MxN! / (MxN - K)! / K! )
+
+Memory
+------
+Memory footprint is O(MxN) - the depth of the call stack.
+Memory footprint is also a solution limitation, so if MxN is big enough I am expecting the stack overflow.
+For the practical reasons (big MxN means very long computation) and for the sake of simplicity I left the solution as recursive.

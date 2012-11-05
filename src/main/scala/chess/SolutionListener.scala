@@ -1,10 +1,7 @@
 package chess
 
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent._
-import collection.immutable.Queue
-import chess.Board
-import java.io.{PrintStream, BufferedOutputStream, BufferedWriter}
+import java.io.BufferedOutputStream
 
 class SolutionsListener{
   private val solutionsFound = new AtomicInteger(0)
@@ -19,7 +16,7 @@ class SolutionsListener{
 
 class SysOutSolutionsListener extends SolutionsListener{
 
-  val out = new BufferedOutputStream(System.out, 5000000)
+  val out = new BufferedOutputStream(System.out, 5000000) // it is so worth the extra memory!
   override def found(board: Board)  {
     super.found(board)
     if(count % 10000 == 0) System.err.println(count/1000+"k")

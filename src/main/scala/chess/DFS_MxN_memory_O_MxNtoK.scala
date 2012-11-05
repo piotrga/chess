@@ -4,13 +4,14 @@ import collection.immutable.Stream.Empty
 
 // This algorithm solves the problem in pessimistic time O( MxN ! / (MxN - K) !) ~= O( MxN ^ K) where K is a number of pieces.
 // It is in the pessimistic case where all the pieces are unique.
+// Optimistic scenario would be O(MxN! / (MxN-K)! / K!) when all pieces are the same.
 
 // It does it in MxN stack frames, so the memory consumption is MxN
 object DFS_MxN_memory_O_MxNtoK{
 
   def findSolutions(board: Board, pieces: Map[Piece,Int], listener: SolutionsListener) = {
     require( pieces.values forall( _ > 0), "Number of pieces must be > 0" )
-    val stopParallelism = pieces.size - 2
+    val STOP_PARALLELISM = pieces.size - 2
 
 
     // This method is not tail recursive, which means that solution will run out of stack if MxN is big
@@ -22,7 +23,7 @@ object DFS_MxN_memory_O_MxNtoK{
       else{
         fields match {
           case pos #:: remainingFields =>
-            for { piece <- iterate(remainingPieces)} {
+            for { piece <- iterate(remainingPieces.uniqueElements)} {
               (board tryPiece (piece, pos))
                 .map (newValidBoard => findSolutions(newValidBoard, remainingPieces - piece, remainingFields))
             }
@@ -32,19 +33,17 @@ object DFS_MxN_memory_O_MxNtoK{
       }
     }
 
-    def iterate(remainingPieces: MSet[Piece]) = if (remainingPieces.size < stopParallelism) // this is rather silly criterion but it does the job
-      remainingPieces.uniqueElements else remainingPieces.uniqueElements.par
+    def iterate(remainingPieces: Iterable[Piece]) = if (remainingPieces.size < STOP_PARALLELISM) // this is rather silly criterion but it does the job
+      remainingPieces else remainingPieces.par
 
     findSolutions(board, MSet(pieces), board.fields)
-    listener.done()
   }
 
-  object MSet{
-    def apply[K](map: Map[K,Int]) : MSet[K] = {
-      MSet(map, size = map.values.sum)
-    }
-  }
 
+  /**
+   * Very basic multi-set or bag as you like it :)
+   * Size is maintained that way to make it faster.
+   */
   final case class MSet[K](private val map: Map[K,Int], size : Int) {
     def isEmpty = map.isEmpty
     def uniqueElements = map.keys
@@ -53,6 +52,12 @@ object DFS_MxN_memory_O_MxNtoK{
       case None => this
       case Some(1) => MSet(map - key, size - 1)
       case Some(i) => MSet(map + (key -> (i - 1)), size - 1)
+    }
+  }
+
+  object MSet{
+    def apply[K](map: Map[K,Int]) : MSet[K] = {
+      MSet(map, size = map.values.sum)
     }
   }
 
